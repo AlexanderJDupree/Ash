@@ -6,7 +6,7 @@ import Parser
 import Executor
 import GHC.IO.Handle(Handle)
 import System.IO(hFlush, stdout)
-import System.Process(createProcess, proc, ProcessHandle)
+import System.Process(ProcessHandle)
 
 import qualified Data.Text as    T
 import qualified Data.Text.IO as I
