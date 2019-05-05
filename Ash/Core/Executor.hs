@@ -1,6 +1,6 @@
 -- |
 -- Module      :  Ash.Core.Executor
--- Description :  Executor asynchronusly handles commands and processes. 
+-- Description :  Executor asynchronusly handles commands and processes.
 -- Copyright   :  Copyright Alexander DuPree (c) 2019
 -- Maintainer  :  Alexander DuPree
 -- Stability   :  experimental
@@ -12,10 +12,20 @@ module Core.Executor
 
 import qualified Data.Text      as T
 import           GHC.IO.Handle  (Handle)
-import           System.Process (ProcessHandle, createProcess, proc)
+import           System.Exit    (ExitCode)
+import           System.Process
+    ( waitForProcess
+    , ProcessHandle
+    , createProcess
+    , delegate_ctlc
+    , proc
+    )
 
-execute :: [T.Text] -> IO (Maybe Handle, Maybe Handle, Maybe Handle, ProcessHandle)
-execute argv = createProcess (proc command args)
+execute :: [T.Text] -> IO ExitCode
+execute argv = createProcess (proc command args){ delegate_ctlc = True }
+    >>= \thread -> waitForProcess . processHandle $ thread
     where command = (T.unpack . head) argv
           args    = map T.unpack $ tail argv
+
+processHandle (_, _, _, handle) = handle
 
