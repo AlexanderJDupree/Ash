@@ -1,3 +1,5 @@
 .stack-work/
 Ash.cabal
 *~
+.stylish-haskell.yaml
+

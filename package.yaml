@@ -29,7 +29,7 @@ library:
 
 executables:
   Ash:
-    main:                main.hs
+    main:                Main.hs
     source-dirs:         Ash
     ghc-options:
     - -threaded
