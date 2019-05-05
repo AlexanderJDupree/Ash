@@ -23,9 +23,8 @@ import           System.Process
 
 execute :: [T.Text] -> IO ExitCode
 execute argv = createProcess (proc command args){ delegate_ctlc = True }
-    >>= \thread -> waitForProcess . processHandle $ thread
+    >>= \thread -> waitForProcess . getHandle $ thread
     where command = (T.unpack . head) argv
           args    = map T.unpack $ tail argv
-
-processHandle (_, _, _, handle) = handle
+          getHandle (_, _, _, handle) = handle
 
