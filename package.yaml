@@ -48,3 +48,6 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - Ash
+    - hspec
+    - QuickCheck
+
