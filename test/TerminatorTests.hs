@@ -10,6 +10,22 @@ module TerminatorTests
     (runTests
     ) where
 
+import           Core.Terminator
+import           System.Exit     (ExitCode (..))
+import           Test.Hspec
+
 runTests :: IO ()
-runTests = putStrLn "Termination tests not yet implemented"
+runTests = hspec $ do
+
+  describe "exitAsh" $
+    context "when exitCode is 0" $
+      it "throws ExitSuccess" $
+        exitAsh 0 `shouldThrow` (== ExitSuccess)
+
+  describe "exitAsh" $
+    context "when exitCode is n, n != 0" $
+      it "throws ExitFailure n" $
+        exitAsh 1 `shouldThrow` (== ExitFailure 1)
+
+
 
