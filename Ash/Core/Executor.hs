@@ -10,6 +10,7 @@ module Core.Executor
     (execute
     ) where
 
+import           Core.BuiltIns
 import qualified Data.Text      as T
 import           GHC.IO.Handle  (Handle)
 import           System.Exit    (ExitCode)
