@@ -13,9 +13,8 @@ module Core.Interpreter
 
 import           Core.Executor
 import           Core.Parser
-import           GHC.IO.Handle  (Handle)
+import           System.Exit    (ExitCode)
 import           System.IO      (hFlush, stdout)
-import           System.Process (ProcessHandle)
 
 import qualified Data.Text      as T
 import qualified Data.Text.IO   as I
@@ -27,9 +26,9 @@ prompt = "$ "
 writePrompt :: T.Text -> IO ()
 writePrompt prompt = I.putStr prompt >> hFlush stdout
 
-runInterpreter :: IO (Maybe Handle, Maybe Handle, Maybe Handle, ProcessHandle)
+runInterpreter :: IO ExitCode
 runInterpreter = do
     writePrompt prompt
     command <- I.getLine
-    (execute . parse) command
+    status  <- (execute . parse) command
     runInterpreter
