@@ -1,4 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
 -- |
 -- Module      :  Ash.Core.Interpreter
 -- Description :  Interpreter interacts user and manages parse, execute cyle
@@ -6,6 +5,8 @@
 -- Maintainer  :  Alexander DuPree
 -- Stability   :  experimental
 -- Portability :  POSIX
+
+{-# LANGUAGE OverloadedStrings #-}
 
 module Core.Interpreter
     ( runInterpreter
