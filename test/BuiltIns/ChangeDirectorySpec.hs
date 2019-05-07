@@ -6,10 +6,13 @@
 -- Stability   :  experimental
 -- Portability :  POSIX
 
+{-# LANGUAGE OverloadedStrings #-}
+
 module BuiltIns.ChangeDirectorySpec where
 
 import           BuiltIns.ChangeDirectory
 import           Data.Text                (pack)
+import           System.Exit              (ExitCode (..))
 import           Test.Hspec
 
 main :: IO ()
@@ -20,17 +23,17 @@ spec = do
   describe "changeDir" $
     context "when given a valid directory path" $
       it "returns 0" $ do
-        status <- (changeDir . pack) "."
-        status `shouldBe` 0
+        status <- changeDir ["."]
+        status `shouldBe` ExitSuccess
 
   describe "changeDir" $
     context "when given a valid path with '~'" $
       it "returns 0" $ do
-        status <- (changeDir . pack) "~/"
-        status `shouldBe` 0
+        status <- changeDir ["~/"]
+        status `shouldBe` ExitSuccess
 
   describe "changeDir" $
     context "when given an invalid path" $
       it "returns 1" $ do
-        status <- (changeDir . pack) "not a directory"
-        status `shouldBe` 1
+        status <- changeDir ["not a directory"]
+        status `shouldBe` ExitFailure 1
