@@ -14,13 +14,14 @@ module BuiltIns.Table
     ) where
 
 import           BuiltIns.ChangeDirectory
+import           BuiltIns.Exit
 import           Data.HashMap.Lazy        (fromList, lookup)
 import qualified Data.HashMap.Lazy        as Map
 import           Data.Text                (Text)
 import           System.Exit              (ExitCode)
 
 builtIns :: Map.HashMap Text ([Text] -> IO ExitCode)
-builtIns = Map.fromList [("cd", changeDir)]
+builtIns = Map.fromList [("cd", changeDir), ("exit", exit)]
 
 searchBuiltIns :: Text -> Maybe ([Text] -> IO ExitCode)
 searchBuiltIns command = Map.lookup command builtIns

@@ -13,7 +13,9 @@ module Core.Terminator
 import           System.Exit
 
 exitAsh :: Int -> IO a
-exitAsh exitCode = case exitCode of
-    0 -> exitSuccess
-    _ -> (exitWith . ExitFailure) exitCode
+exitAsh exitCode = do
+    print exitCode
+    case exitCode of
+        0 -> exitSuccess
+        _ -> (exitWith . ExitFailure) exitCode
 

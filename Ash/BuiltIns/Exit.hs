@@ -14,9 +14,10 @@ import           Data.Text      (Text)
 import           Data.Text.Read (decimal)
 import           System.Exit    (ExitCode (..), exitSuccess, exitWith)
 
-exit :: [Text] -> IO ()
+exit :: [Text] -> IO ExitCode
+exit []   = exit' 0
 exit args = case decimal . head $ args of
-    Left err         -> exit' 0
+    Left  err        -> exit' 0
     Right (code, _)  -> exit' code
 
 exit' :: Int -> IO a
