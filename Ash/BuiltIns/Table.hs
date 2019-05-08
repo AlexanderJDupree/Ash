@@ -25,4 +25,3 @@ builtIns = Map.fromList [("cd", changeDir)]
 searchBuiltIns :: Text -> Maybe ([Text] -> IO ExitCode)
 searchBuiltIns command = Map.lookup command builtIns
 
-

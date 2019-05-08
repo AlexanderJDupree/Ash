@@ -38,6 +38,6 @@ convertToFilePath' path           = makeAbsolute path
 -- TODO look into moving exception handling into a higher level.
 handleException :: IOError -> IO ExitCode
 handleException exception = do
-    hPutStr stderr ("cd: " ++ show exception)
+    hPutStr stderr ("cd: " ++ show exception ++ "\n")
     return ( ExitFailure 1 )
 
