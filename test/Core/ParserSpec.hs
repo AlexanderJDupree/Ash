@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 -- |
 -- Module      :  Core.ParserSpec
 -- Description :  Runs tests for Ash.Core.Parser
@@ -7,6 +5,8 @@
 -- Maintainer  :  Alexander DuPree
 -- Stability   :  experimental
 -- Portability :  POSIX
+
+{-# LANGUAGE OverloadedStrings #-}
 
 module Core.ParserSpec where
 
@@ -22,7 +22,7 @@ spec =
   describe "parse" $
     context "when given a string" $
       it "returns a list of Text tokens, seperated by whitespace" $
-        parse "A list of words" `shouldBe` map T.pack ["A", "list", "of", "words"]
+        parse "A list of words" `shouldBe` ["A", "list", "of", "words"]
 
 
 

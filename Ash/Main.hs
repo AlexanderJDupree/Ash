@@ -16,7 +16,6 @@ module Main where
 
 import           Core.Initializer
 import           Core.Interpreter
-import           Core.Terminator
 import           System.Exit
 
 main :: IO a
