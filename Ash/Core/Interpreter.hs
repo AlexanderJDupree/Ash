@@ -12,7 +12,7 @@ module Core.Interpreter
     ( runInterpreter
     ) where
 
-import           Control.Exception
+import           Control.Exception (try)
 import           Core.Executor
 import           Core.Parser
 import           System.Exit       (ExitCode (..))
@@ -31,23 +31,21 @@ writePrompt prompt = I.putStr prompt >> hFlush stdout
 -- | Kickstarts interpreter loop with ExitSuccess code
 runInterpreter :: IO ExitCode
 runInterpreter = runInterpreter' ExitSuccess
-    
+
 -- | Recurse until a signal is encoutered then assess
 runInterpreter' :: ExitCode -> IO ExitCode
 runInterpreter' status = do
-    exitStatus <- try interpret
+    exitStatus <- try interpreter
     case exitStatus of
-        Left signal   -> assess signal status
+        Left  signal  -> assess signal status
         Right status' -> runInterpreter' status'
 
 -- | Executes one iteration of the interpreter cycle
-interpret :: IO ExitCode
-interpret = writePrompt prompt >> I.getLine >>= execute . parse
+interpreter :: IO ExitCode
+interpreter = writePrompt prompt >> I.getLine >>= execute . parse
 
 -- | Shell exits with previous return code, or the code specified by the user
 assess :: ExitCode -> ExitCode -> IO ExitCode
-assess signal status = 
-    return $ case signal of
-        ExitSuccess   -> status
-        ExitFailure n -> ExitFailure n
-    
+assess ExitSuccess status = return status
+assess (ExitFailure n) _  = return $ ExitFailure n
+
