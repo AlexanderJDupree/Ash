@@ -1,13 +1,12 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 -- |
 -- Module      :  Ash.BuiltIns.ChangeDirectory
--- Description :  Manages definitions and table of built in commands
+-- Description :  Changes current working directory
 -- Copyright   :  Copyright Alexander DuPree (c) 2019
 -- Maintainer  :  Alexander DuPree
 -- Stability   :  experimental
 -- Portability :  POSIX
 
+{-# LANGUAGE OverloadedStrings #-}
 
 module BuiltIns.ChangeDirectory
     (changeDir

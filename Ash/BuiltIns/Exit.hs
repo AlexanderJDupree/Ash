@@ -1,6 +1,6 @@
 -- |
--- Module      :  Ash.BuiltIns.ChangeDirectory
--- Description :  Manages definitions and table of built in commands
+-- Module      :  Ash.BuiltIns.Exit
+-- Description :  Executes ExitCode exception to signal shell termination
 -- Copyright   :  Copyright Alexander DuPree (c) 2019
 -- Maintainer  :  Alexander DuPree
 -- Stability   :  experimental

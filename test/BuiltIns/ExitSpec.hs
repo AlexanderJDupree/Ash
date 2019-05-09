@@ -1,6 +1,6 @@
 -- |
 -- Module      :  BuiltIns.ExitSpec
--- Description :  Runs tests for Ash.Core.Terminator
+-- Description :  Runs tests for Ash.BuiltIns.ExitSpec
 -- Copyright   :  Copyright Alexander DuPree (c) 2019
 -- Maintainer  :  Alexander DuPree
 -- Stability   :  experimental
