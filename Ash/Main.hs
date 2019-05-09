@@ -19,5 +19,5 @@ import           Core.Interpreter
 import           System.Exit
 
 main :: IO a
-main = initializeAsh >> runInterpreter >>= exitWith
+main = initialize >> runAsh >>= exitWith
 

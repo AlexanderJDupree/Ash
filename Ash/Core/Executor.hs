@@ -28,7 +28,7 @@ import           System.Process
     )
 
 execute :: [T.Text] -> IO ExitCode
-execute argv = handle (\ (e ::IOException) -> commandNotFound command ) $
+execute argv = handle ( commandNotFound command ) $
     case searchBuiltIns command of
         Just cmd -> cmd args
         Nothing  -> execute' (T.unpack command) $ map T.unpack args
@@ -40,8 +40,9 @@ execute' command args = createProcess (proc command args){ delegate_ctlc = True 
     >>= \thread -> waitForProcess . getHandle $ thread
     where getHandle (_, _, _, handle) = handle
 
-commandNotFound :: T.Text -> IO ExitCode
-commandNotFound command = do
+-- TODO Abstract this into a general IO exception handler
+commandNotFound :: T.Text -> IOException -> IO ExitCode
+commandNotFound command _ = do
     I.putStrLn $ "ash: command not found: " `T.append` command
     return ( ExitFailure 1 )
 

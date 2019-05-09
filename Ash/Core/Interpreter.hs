@@ -9,7 +9,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Core.Interpreter
-    ( runInterpreter
+    ( runAsh
     ) where
 
 import           Control.Exception (try)
@@ -18,6 +18,7 @@ import           Core.Parser
 import           System.Exit       (ExitCode (..))
 import           System.IO         (hFlush, stdout)
 
+import           Data.Either       (either)
 import qualified Data.Text         as T
 import qualified Data.Text.IO      as I
 
@@ -29,23 +30,20 @@ writePrompt :: T.Text -> IO ()
 writePrompt prompt = I.putStr prompt >> hFlush stdout
 
 -- | Kickstarts interpreter loop with ExitSuccess code
-runInterpreter :: IO ExitCode
-runInterpreter = runInterpreter' ExitSuccess
+runAsh :: IO ExitCode
+runAsh = runAsh' ExitSuccess
 
--- | Recurse until a signal is encoutered then assess
-runInterpreter' :: ExitCode -> IO ExitCode
-runInterpreter' status = do
-    exitStatus <- try interpreter
-    case exitStatus of
-        Left  signal  -> assess signal status
-        Right status' -> runInterpreter' status'
+-- | Run until Left ExitCode is encountered
+runAsh' :: ExitCode -> IO ExitCode
+runAsh' status = either (exit status) continue =<< try interpreter
+    where continue = runAsh'
 
 -- | Executes one iteration of the interpreter cycle
 interpreter :: IO ExitCode
 interpreter = writePrompt prompt >> I.getLine >>= execute . parse
 
 -- | Shell exits with previous return code, or the code specified by the user
-assess :: ExitCode -> ExitCode -> IO ExitCode
-assess ExitSuccess status = return status
-assess (ExitFailure n) _  = return $ ExitFailure n
+exit :: ExitCode -> ExitCode -> IO ExitCode
+exit ExitSuccess status = return status
+exit (ExitFailure n) _  = return $ ExitFailure n
 
