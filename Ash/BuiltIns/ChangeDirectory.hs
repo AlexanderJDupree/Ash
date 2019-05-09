@@ -15,26 +15,30 @@ module BuiltIns.ChangeDirectory
 
 import           Control.Exception (handle)
 import           Data.Text         (Text, unpack)
-import           System.Directory  (makeAbsolute, setCurrentDirectory)
-import           System.Exit       (ExitCode(..))
+import           System.Directory
+    ( getHomeDirectory
+    , makeAbsolute
+    , setCurrentDirectory
+    )
+import           System.Exit       (ExitCode (..))
 import           System.IO         (hPutStr, stderr)
 import           System.IO.Error   (IOError)
 
 changeDir :: [Text] -> IO ExitCode
-changeDir args = handle invalidDir $ 
+changeDir path = handle invalidDirectory $
     convertToFilePath path >>= setCurrentDirectory >> return ExitSuccess
-    where path = head args
 
-convertToFilePath :: Text -> IO FilePath
-convertToFilePath = convertToFilePath' . unpack
+convertToFilePath :: [Text] -> IO FilePath
+convertToFilePath []   = getHomeDirectory
+convertToFilePath path = convertToFilePath' . unpack . head $ path
 
 convertToFilePath' :: String -> IO FilePath
 convertToFilePath' ('~':'/':path) = convertToFilePath' path
 convertToFilePath' path           = makeAbsolute path
 
 -- TODO look into moving exception handling into a higher level.
-invalidDir :: IOError -> IO ExitCode
-invalidDir err = do
+invalidDirectory :: IOError -> IO ExitCode
+invalidDirectory err = do
     hPutStr stderr ("cd: " ++ show err ++ "\n")
     return ( ExitFailure 1 )
 
