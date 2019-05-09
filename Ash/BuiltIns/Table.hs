@@ -21,7 +21,9 @@ import           Data.Text                (Text)
 import           System.Exit              (ExitCode)
 
 builtIns :: Map.HashMap Text ([Text] -> IO ExitCode)
-builtIns = Map.fromList [("cd", changeDir), ("exit", exit)]
+builtIns = Map.fromList [ ("cd", changeDir)
+                        , ("exit", exit)
+                        ]
 
 searchBuiltIns :: Text -> Maybe ([Text] -> IO ExitCode)
 searchBuiltIns command = Map.lookup command builtIns
