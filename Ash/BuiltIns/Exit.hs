@@ -15,13 +15,13 @@ import           Data.Text.Read (decimal)
 import           System.Exit    (ExitCode (..), exitSuccess, exitWith)
 
 exit :: [Text] -> IO ExitCode
-exit []   = exit' 0
-exit args = case decimal . head $ args of
-    Left  err        -> exit' 0
-    Right (code, _)  -> exit' code
+exit []   = exitDefault []
+exit args = either exitDefault exitWithCode =<< read args
+    where read = return . decimal . head
 
-exit' :: Int -> IO a
-exit' exitCode = case exitCode of
-    0 -> exitSuccess
-    _ -> (exitWith . ExitFailure) exitCode
+exitDefault :: String -> IO a
+exitDefault _ = exitSuccess
+
+exitWithCode :: (Int, Text) -> IO a
+exitWithCode (n, _) = exitWith . ExitFailure $ n
 
