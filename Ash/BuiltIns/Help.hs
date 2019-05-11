@@ -12,16 +12,29 @@ module BuiltIns.Help
     (help
     ) where
 
-import           Data.HashMap.Lazy (fromList, lookup)
-import           Data.Text         (Text)
-import           Data.Text.IO      (hGetContents, hPutStrLn)
+import           Control.Exception (IOException, handle)
+import           Data.Text         (Text, unpack)
+import           Data.Text.IO      (hPutStrLn, readFile)
 import           System.Exit       (ExitCode (..))
-import           System.IO         (FilePath, stderr, stdin, stdout)
+import           System.IO         (FilePath, stderr)
 
 import qualified Data.Text         as T
 import qualified Data.Text.IO      as I
-import qualified Data.HashMap.Lazy as Map
+
+-- TODO Needs to be set by the initializer
+docsPath :: FilePath
+docsPath = "/home/adupree/ash/Docs/"
 
 help :: [T.Text] -> IO ExitCode
-help args = 
-    I.hPutStrLn stdout "Help section not yet implemented" >> return ExitSuccess
+help []   = help ["help"]
+help args = handle ( docNotFound cmd ) $
+    displayHelp =<< I.readFile ( docsPath ++ unpack cmd ++ ".md" )
+    where cmd = head args
+
+displayHelp :: T.Text -> IO ExitCode
+displayHelp text = I.putStrLn text >> return ExitSuccess
+
+docNotFound :: T.Text -> IOException -> IO ExitCode
+docNotFound cmd _ =
+    I.hPutStrLn stderr ("help: No help topics match : " `T.append` cmd) 
+    >> return ( ExitFailure 1)
