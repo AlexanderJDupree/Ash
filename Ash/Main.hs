@@ -8,18 +8,16 @@ Maintainer  :  Alexander DuPree
 Stability   :  experimental
 Portability :  POSIX
 
-Ash is a educational project designed to learn Haskell, functional concepts, concurrency, and Unix shells design.
--} 
+Ash is a educational project designed to learn Haskell, functional concepts,
+concurrency, and Unix shell design.
+-}
 
 module Main where
 
 import           Core.Initializer
 import           Core.Interpreter
-import           Core.Terminator
+import           System.Exit
 
 main :: IO a
-main = do
-    initializeAsh
-    runInterpreter
-    exitAsh 0
+main = initialize >> runAsh >>= exitWith
 

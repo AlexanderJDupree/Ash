@@ -7,9 +7,9 @@
 -- Portability :  POSIX
 
 module Core.Initializer
-    (initializeAsh
+    (initialize
     ) where
 
-initializeAsh :: IO ()
-initializeAsh = putStrLn "Initializer not yet implemented"
+initialize :: IO ()
+initialize = putStrLn "Initializer not yet implemented"
 

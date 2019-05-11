@@ -1,23 +1,23 @@
 -- |
--- Module      :  ExecutorTests
+-- Module      :  Core.ExecutorSpec
 -- Description :  Runs tests for Ash.Core.Executor
 -- Copyright   :  Copyright Alexander DuPree (c) 2019
 -- Maintainer  :  Alexander DuPree
 -- Stability   :  experimental
 -- Portability :  POSIX
 
-module ExecutorTests
-    (runTests
-    ) where
+module Core.ExecutorSpec where
 
 import           Core.Executor
 import qualified Data.Text     as T
 import           System.Exit   (ExitCode (..))
 import           Test.Hspec
 
-runTests :: IO ()
-runTests = hspec $ do
+main :: IO ()
+main = hspec spec
 
+spec :: Spec
+spec = do
   describe "execute" $
     context "when given a valid POSIX command" $
       it "returns ExitSuccess" $ do

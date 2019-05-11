@@ -23,6 +23,8 @@ dependencies:
 - base >= 4.7 && < 5
 - text
 - process
+- directory
+- unordered-containers
 
 library:
   source-dirs: Ash
