@@ -15,18 +15,18 @@ module Core.Interpreter
 import           Control.Exception (try)
 import           Core.Executor
 import           Core.Parser
+import           Data.Either       (either)
+import           Data.Text         (Text)
 import           System.Exit       (ExitCode (..))
 import           System.IO         (hFlush, stdout)
 
-import           Data.Either       (either)
-import qualified Data.Text         as T
 import qualified Data.Text.IO      as I
 
 -- TODO prompt should be set by config file/privilege status
-prompt :: T.Text
+prompt :: Text
 prompt = "$ "
 
-writePrompt :: T.Text -> IO ()
+writePrompt :: Text -> IO ()
 writePrompt prompt = I.putStr prompt >> hFlush stdout
 
 -- | Kickstarts interpreter loop with ExitSuccess code

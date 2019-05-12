@@ -6,8 +6,7 @@
 -- Stability   :  experimental
 -- Portability :  POSIX
 
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings   #-}
 
 module Core.Executor
     (execute
@@ -15,10 +14,10 @@ module Core.Executor
 
 import           BuiltIns.Table
 import           Control.Exception (IOException, handle)
+import           Core.Handler
 import qualified Data.Text         as T
-import qualified Data.Text.IO      as I
 import           GHC.IO.Handle     (Handle)
-import           System.Exit       (ExitCode (..))
+import           System.Exit       (ExitCode)
 import           System.Process
     ( ProcessHandle
     , createProcess
@@ -27,22 +26,30 @@ import           System.Process
     , waitForProcess
     )
 
+data Thread = Thread { stdin   :: Maybe Handle
+                     , stdout  :: Maybe Handle 
+                     , stderr  :: Maybe Handle
+                     , pHandle :: ProcessHandle }
+
 execute :: [T.Text] -> IO ExitCode
 execute argv = handle ( commandNotFound command ) $
     case searchBuiltIns command of
         Just cmd -> cmd args
-        Nothing  -> execute' (T.unpack command) $ map T.unpack args
+        Nothing  -> execute' command args 
         where command = head argv
               args    = tail argv
 
-execute' :: String -> [String] -> IO ExitCode
-execute' command args = createProcess (proc command args){ delegate_ctlc = True }
-    >>= \thread -> waitForProcess . getHandle $ thread
-    where getHandle (_, _, _, handle) = handle
+-- TODO create a Thread type to make createProcess return type manageable
+execute' :: T.Text -> [T.Text] -> IO ExitCode
+execute' command args = createThread command args >>= 
+    \thread -> waitForProcess . pHandle $ thread
 
 -- TODO Abstract this into a general IO exception handler
 commandNotFound :: T.Text -> IOException -> IO ExitCode
-commandNotFound command _ = do
-    I.putStrLn $ "ash: command not found: " `T.append` command
-    return ( ExitFailure 1 )
+commandNotFound command =
+    exceptionsIO ( "command not found: " `T.append` command)
 
+createThread :: T.Text -> [T.Text] -> IO Thread
+createThread cmd args = do
+    (input, output, error, handle) <- createProcess ( proc (T.unpack cmd) $ map T.unpack args) { delegate_ctlc = True }
+    return ( Thread input output error handle )

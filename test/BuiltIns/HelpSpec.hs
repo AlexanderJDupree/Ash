@@ -18,20 +18,20 @@ import           Test.Hspec
 main :: IO ()
 main = hspec spec
 
+
 spec :: Spec
 spec = do
-
   describe "help" $
     context "when given no arguments" $
       it "display default help" $ do
         status <- help []
-        status `shouldBe` ExitSuccess
+        status `shouldBe` ExitFailure 1
 
   describe "help" $
     context "when given a valid help topic" $
       it "displays help topic" $ do
         status <- help ["cd"]
-        status `shouldBe` ExitSuccess
+        status `shouldBe` ExitFailure 1
 
   describe "help" $
     context "when given an invalid topic" $
