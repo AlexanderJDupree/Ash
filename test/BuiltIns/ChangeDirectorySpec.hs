@@ -11,12 +11,11 @@
 module BuiltIns.ChangeDirectorySpec where
 
 import           BuiltIns.ChangeDirectory
-import           Data.Text                (pack)
-import           System.Directory
-    ( getCurrentDirectory
-    , getHomeDirectory
-    )
-import           System.Exit              (ExitCode (..))
+import           Data.Text                      ( pack )
+import           System.Directory               ( getCurrentDirectory
+                                                , getHomeDirectory
+                                                )
+import           System.Exit                    ( ExitCode(..) )
 import           Test.Hspec
 
 main :: IO ()
@@ -24,27 +23,31 @@ main = hspec spec
 
 spec :: Spec
 spec = do
-  describe "changeDir" $
-    context "when given a valid directory path" $
-      it "returns 0" $ do
+  describe "changeDir"
+    $ context "when given a valid directory path"
+    $ it "returns 0"
+    $ do
         status <- changeDir ["."]
         status `shouldBe` ExitSuccess
 
-  describe "changeDir" $
-    context "when given a valid path with '~'" $
-      it "returns 0" $ do
+  describe "changeDir"
+    $ context "when given a valid path with '~'"
+    $ it "returns 0"
+    $ do
         status <- changeDir ["~/"]
         status `shouldBe` ExitSuccess
 
-  describe "changeDir" $
-    context "when given an invalid path" $
-      it "returns 1" $ do
+  describe "changeDir"
+    $ context "when given an invalid path"
+    $ it "returns 1"
+    $ do
         status <- changeDir ["not a directory"]
         status `shouldBe` ExitFailure 1
 
-  describe "changeDir" $
-    context "when given no arguments" $
-      it "changes to home directory" $ do
+  describe "changeDir"
+    $ context "when given no arguments"
+    $ it "changes to home directory"
+    $ do
         status  <- changeDir []
         currDir <- getCurrentDirectory
         homeDir <- getHomeDirectory

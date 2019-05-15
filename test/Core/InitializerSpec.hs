@@ -14,8 +14,7 @@ main :: IO ()
 main = hspec spec
 
 spec :: Spec
-spec = 
-    describe "Inititializer" $
-        it "tests" $ pendingWith "not yet implemented"
-    
+spec =
+  describe "Inititializer" $ it "tests" $ pendingWith "not yet implemented"
+
 
