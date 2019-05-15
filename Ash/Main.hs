@@ -16,7 +16,9 @@ module Main where
 
 import           Core.Initializer
 import           Core.Interpreter
-import           System.Exit      (ExitCode, exitWith)
+import           System.Exit                    ( ExitCode
+                                                , exitWith
+                                                )
 
 main :: IO ExitCode
 main = initialize >> runAsh >>= exitWith

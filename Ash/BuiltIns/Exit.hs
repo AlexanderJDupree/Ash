@@ -7,17 +7,22 @@
 -- Portability :  POSIX
 
 module BuiltIns.Exit
-    (exit
-    ) where
+  ( exit
+  )
+where
 
-import           Data.Text      (Text)
-import           Data.Text.Read (decimal)
-import           System.Exit    (ExitCode (..), exitSuccess, exitWith)
+import           Core.Ash
+import           Data.Text                      ( Text )
+import           Data.Text.Read                 ( decimal )
+import           System.Exit                    ( ExitCode(..)
+                                                , exitSuccess
+                                                , exitWith
+                                                )
 
-exit :: [Text] -> IO ExitCode
-exit []   = exitDefault []
-exit args = either exitDefault exitWithCode =<< read args
-    where read = return . decimal . head
+exit :: Args -> IO ExitCode
+exit (Args []) = exitDefault []
+exit args      = either exitDefault exitWithCode =<< read (unArgs args)
+  where read = return . decimal . head
 
 exitDefault :: String -> IO a
 exitDefault _ = exitSuccess

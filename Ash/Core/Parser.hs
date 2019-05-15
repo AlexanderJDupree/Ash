@@ -7,10 +7,13 @@
 -- Portability :  POSIX
 
 module Core.Parser
-    (parse
-    ) where
+  ( parse
+  )
+where
 
-import qualified Data.Text as T
+import           Core.Ash
+import qualified Data.Text                     as T
 
-parse :: T.Text -> [T.Text]
-parse = T.words
+parse :: Command T.Text -> Command (Path, Args)
+parse (Command rawText) = Command (Path $ head tokens, Args $ tail tokens)
+  where tokens = T.words rawText

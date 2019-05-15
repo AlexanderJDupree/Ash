@@ -9,23 +9,24 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module BuiltIns.Table
-    (builtIns
-    ,searchBuiltIns
-    ) where
+  ( builtIns
+  , searchBuiltIns
+  )
+where
 
 import           BuiltIns.ChangeDirectory
 import           BuiltIns.Exit
 import           BuiltIns.Help
-import           Data.HashMap.Lazy        (fromList, lookup)
-import qualified Data.HashMap.Lazy        as Map
-import           Data.Text                (Text)
-import           System.Exit              (ExitCode)
+import           Core.Ash
+import           Data.HashMap.Lazy              ( fromList
+                                                , lookup
+                                                )
+import qualified Data.HashMap.Lazy             as Map
+import           Data.Text                      ( Text )
+import           System.Exit                    ( ExitCode )
 
-builtIns :: Map.HashMap Text ([Text] -> IO ExitCode)
-builtIns = Map.fromList [ ("cd", changeDir)
-                        , ("exit", exit)
-                        , ("help", help)
-                        ]
+builtIns :: Map.HashMap Text (Args -> IO ExitCode)
+builtIns = Map.fromList [("cd", changeDir), ("exit", exit), ("help", help)]
 
-searchBuiltIns :: Text -> Maybe ([Text] -> IO ExitCode)
-searchBuiltIns command = Map.lookup command builtIns
+searchBuiltIns :: Path -> Maybe (Args -> IO ExitCode)
+searchBuiltIns command = Map.lookup (unPath command) builtIns

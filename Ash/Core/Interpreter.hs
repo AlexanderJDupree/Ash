@@ -9,19 +9,21 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Core.Interpreter
-    ( runAsh
-    ) where
+  ( runAsh
+  )
+where
 
-import           Control.Exception (try)
+import           Control.Exception              ( try )
+import           Core.Ash
 import           Core.Executor
 import           Core.Parser
-import           Data.Either       (either)
-import           Data.Text         (Text)
-import           System.Exit       (ExitCode (..))
-import           System.IO         (hFlush, stdout)
-
-import qualified Data.Text.IO      as I
-
+import           Data.Either                    ( either )
+import           Data.Text                      ( Text )
+import           System.Exit                    ( ExitCode(..) )
+import           System.IO                      ( hFlush
+                                                , stdout
+                                                )
+import qualified Data.Text.IO                  as I
 -- TODO prompt should be set by config file/privilege status
 prompt :: Text
 prompt = "$ "
@@ -36,14 +38,14 @@ runAsh = runAsh' ExitSuccess
 -- | Run until Left ExitCode is encountered
 runAsh' :: ExitCode -> IO ExitCode
 runAsh' status = either (exit status) continue =<< try interpreter
-    where continue = runAsh'
+  where continue = runAsh'
 
 -- | Executes one iteration of the interpreter cycle
 interpreter :: IO ExitCode
-interpreter = writePrompt prompt >> I.getLine >>= execute . parse
+interpreter = writePrompt prompt >> getRawCommand >>= execute . parse
 
 -- | Shell exits with previous return code, or the code specified by the user
 exit :: ExitCode -> ExitCode -> IO ExitCode
 exit ExitSuccess status = return status
-exit (ExitFailure n) _  = return $ ExitFailure n
+exit exitCode    _      = return exitCode
 
