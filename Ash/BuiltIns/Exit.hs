@@ -30,4 +30,3 @@ exitDefault _ = exitSuccess
 
 exitWithCode :: (Int, Text) -> IO a
 exitWithCode (n, _) = exitWith . ExitFailure $ n
-

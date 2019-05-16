@@ -37,6 +37,7 @@ import qualified Data.Text.IO                  as I
 docsPath :: IO FilePath
 docsPath = makeAbsolute "Not yet implemented"
 
+
 help :: Args -> IO ExitCode
 help []   = help ["help"]
 help args = handle (docNotFound cmd) $ do

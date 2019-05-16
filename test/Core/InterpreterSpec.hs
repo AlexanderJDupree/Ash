@@ -14,6 +14,4 @@ main :: IO ()
 main = hspec spec
 
 spec :: Spec
-spec = 
-    describe "Interpreter" $
-        it "tests" $ pendingWith "not yet implemented"
+spec = describe "Interpreter" $ it "tests" $ pendingWith "not yet implemented"

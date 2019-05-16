@@ -38,6 +38,7 @@ changeDir argv =
     >>  return ExitSuccess
 
 convertToFilePath :: Args -> IO FilePath
+
 convertToFilePath []   = getHomeDirectory
 convertToFilePath args = convertToFilePath' . unpack . head $ args
 

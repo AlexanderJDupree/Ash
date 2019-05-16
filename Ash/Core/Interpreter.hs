@@ -28,7 +28,9 @@ import           System.Exit                    ( ExitCode(..) )
 import           System.IO                      ( hFlush
                                                 , stdout
                                                 )
+                                                
 import qualified Data.Text.IO                  as I
+
 -- TODO prompt should be set by config file/privilege status
 prompt :: Text
 prompt = "$ "
@@ -59,4 +61,3 @@ interpreter = writePrompt prompt >> getRawCommand >>= execute . parse
 exit :: ExitCode -> ExitCode -> IO ExitCode
 exit ExitSuccess status = return status
 exit exitCode    _      = return exitCode
-
