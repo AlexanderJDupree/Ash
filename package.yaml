@@ -25,6 +25,7 @@ dependencies:
 - process
 - directory
 - unordered-containers
+- unix
 
 library:
   source-dirs: Ash
