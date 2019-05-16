@@ -9,8 +9,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module BuiltIns.Table
-  ( builtIns
-  , searchBuiltIns
+  ( searchBuiltIns
   )
 where
 
@@ -21,12 +20,13 @@ import           Core.Ash
 import           Data.HashMap.Lazy              ( fromList
                                                 , lookup
                                                 )
-import qualified Data.HashMap.Lazy             as Map
 import           Data.Text                      ( Text )
 import           System.Exit                    ( ExitCode )
+
+import qualified Data.HashMap.Lazy             as Map
 
 builtIns :: Map.HashMap Text (Args -> IO ExitCode)
 builtIns = Map.fromList [("cd", changeDir), ("exit", exit), ("help", help)]
 
 searchBuiltIns :: Path -> Maybe (Args -> IO ExitCode)
-searchBuiltIns command = Map.lookup (unPath command) builtIns
+searchBuiltIns path = Map.lookup path builtIns

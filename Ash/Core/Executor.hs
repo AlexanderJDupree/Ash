@@ -34,25 +34,22 @@ data Thread = Thread { stdin   :: Maybe Handle
                      , stderr  :: Maybe Handle
                      , pHandle :: ProcessHandle }
 
-execute :: Command (Path, Args) -> IO ExitCode
-execute (Command (path, args)) =
-  handle (commandNotFound path) $ case searchBuiltIns path of
-    Just cmd -> cmd args
-    Nothing  -> execute' path args
+execute :: Command -> IO ExitCode
+execute cmd =
+  handle (commandNotFound cmd) $ case searchBuiltIns . path $ cmd of
+    Just builtin -> builtin . args $ cmd
+    Nothing      -> execute' cmd
 
 -- TODO create a Thread type to make createProcess return type manageable
-execute' :: Path -> Args -> IO ExitCode
-execute' command args =
-  createThread command args >>= \thread -> waitForProcess . pHandle $ thread
+execute' :: Command -> IO ExitCode
+execute' cmd =
+  createThread cmd >>= \thread -> waitForProcess . pHandle $ thread
 
--- TODO Abstract this into a general IO exception handler
-commandNotFound :: Path -> IOException -> IO ExitCode
-commandNotFound command =
-  exceptionsIO ("command not found: " `T.append` unPath command)
-
-createThread :: Path -> Args -> IO Thread
-createThread cmd args = do
-  (input, output, error, handle) <-
-    createProcess (proc (T.unpack . unPath $ cmd) $ map T.unpack (unArgs args)) { delegate_ctlc = True
-                                                                                }
+createThread :: Command -> IO Thread
+createThread (Command path args) = do
+  (input, output, error, handle) <- createProcess
+    (proc (T.unpack path) $ map T.unpack args) { delegate_ctlc = True }
   return (Thread input output error handle)
+
+commandNotFound :: Command -> IOException -> IO ExitCode
+commandNotFound cmd = exceptionsIO ("command not found: " `T.append` path cmd)

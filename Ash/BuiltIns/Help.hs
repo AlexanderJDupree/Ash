@@ -38,11 +38,11 @@ docsPath :: IO FilePath
 docsPath = makeAbsolute "Not yet implemented"
 
 help :: Args -> IO ExitCode
-help (Args []) = help $ Args ["help"]
-help args      = handle (docNotFound cmd) $ do
+help []   = help ["help"]
+help args = handle (docNotFound cmd) $ do
   path <- docsPath
   displayHelp =<< I.readFile (path ++ unpack cmd ++ ".md")
-  where cmd = head $ unArgs args
+  where cmd = head args
 
 displayHelp :: T.Text -> IO ExitCode
 displayHelp text = I.putStrLn text >> return ExitSuccess

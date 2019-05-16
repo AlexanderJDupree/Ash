@@ -42,7 +42,7 @@ runAsh' status = either (exit status) continue =<< try interpreter
 
 -- | Executes one iteration of the interpreter cycle
 interpreter :: IO ExitCode
-interpreter = writePrompt prompt >> getRawCommand >>= execute . parse
+interpreter = writePrompt prompt >> I.getLine >>= execute . parse
 
 -- | Shell exits with previous return code, or the code specified by the user
 exit :: ExitCode -> ExitCode -> IO ExitCode

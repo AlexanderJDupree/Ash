@@ -14,6 +14,9 @@ where
 import           Core.Ash
 import qualified Data.Text                     as T
 
-parse :: Command T.Text -> Command (Path, Args)
-parse (Command rawText) = Command (Path $ head tokens, Args $ tail tokens)
-  where tokens = T.words rawText
+parse :: T.Text -> Command
+parse rawText = Command path args
+ where
+  path   = head tokens
+  args   = tail tokens
+  tokens = T.words rawText

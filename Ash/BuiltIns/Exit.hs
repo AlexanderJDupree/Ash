@@ -20,8 +20,8 @@ import           System.Exit                    ( ExitCode(..)
                                                 )
 
 exit :: Args -> IO ExitCode
-exit (Args []) = exitDefault []
-exit args      = either exitDefault exitWithCode =<< read (unArgs args)
+exit []   = exitDefault []
+exit args = either exitDefault exitWithCode =<< read args
   where read = return . decimal . head
 
 exitDefault :: String -> IO a

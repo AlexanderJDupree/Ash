@@ -28,26 +28,23 @@ import           System.Directory               ( getHomeDirectory
                                                 , setCurrentDirectory
                                                 )
 import           System.Exit                    ( ExitCode(..) )
-import           System.IO                      ( hPutStr
-                                                , stderr
-                                                )
 
+-- | ExitSuccess if directory changed to first argument of argv
 changeDir :: Args -> IO ExitCode
-changeDir path =
-  handle (invalidDirectory path)
-    $   convertToFilePath path
+changeDir argv =
+  handle invalidDirectory
+    $   convertToFilePath argv
     >>= setCurrentDirectory
     >>  return ExitSuccess
 
 convertToFilePath :: Args -> IO FilePath
-convertToFilePath (Args []) = getHomeDirectory
-convertToFilePath args      = convertToFilePath' . unpack . head $ (unArgs args)
+convertToFilePath []   = getHomeDirectory
+convertToFilePath args = convertToFilePath' . unpack . head $ args
 
 convertToFilePath' :: String -> IO FilePath
 convertToFilePath' ('~' : '/' : path) = convertToFilePath' path
 convertToFilePath' path               = makeAbsolute path
 
 -- TODO look into moving exception handling into a higher level.
-invalidDirectory :: Args -> IOException -> IO ExitCode
-invalidDirectory path err =
-  exceptionsIO ("cd: " `append` (pack . show $ err)) err
+invalidDirectory :: IOException -> IO ExitCode
+invalidDirectory err = exceptionsIO ("cd: " `append` (pack . show $ err)) err

@@ -9,18 +9,21 @@
 {-# LANGUAGE OverloadedStrings   #-}
 
 module Core.Handler
-    (exceptionsIO
-    ) where
+  ( exceptionsIO
+  )
+where
 
-import           Control.Exception (IOException)
-import           Data.Text         (Text, append)
-import           Data.Text.IO      (hPutStrLn)
-import           System.Exit       (ExitCode (..))
-import           System.IO         (stderr)
+import           Control.Exception              ( IOException )
+import           Data.Text                      ( Text
+                                                , append
+                                                )
+import           Data.Text.IO                   ( hPutStrLn )
+import           System.Exit                    ( ExitCode(..) )
+import           System.IO                      ( stderr )
 
-import qualified Data.Text.IO      as I
+import qualified Data.Text.IO                  as I
 
-exceptionsIO :: Text -> IOException ->  IO ExitCode
+-- TODO log IOexception into a Ash specific log file
+exceptionsIO :: Text -> IOException -> IO ExitCode
 exceptionsIO message error =
-    I.hPutStrLn stderr ("ash: " `append` message) >>
-    return ( ExitFailure 1 )
+  I.hPutStrLn stderr ("ash: " `append` message) >> return (ExitFailure 1)
