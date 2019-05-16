@@ -11,7 +11,8 @@
 module Core.ParserSpec where
 
 import           Core.Parser
-import qualified Data.Text   as T
+import           Core.Ash
+import qualified Data.Text                     as T
 import           Test.Hspec
 
 main :: IO ()
@@ -19,10 +20,11 @@ main = hspec spec
 
 spec :: Spec
 spec =
-  describe "parse" $
-    context "when given a string" $
-      it "returns a list of Text tokens, seperated by whitespace" $
-        parse "A list of words" `shouldBe` ["A", "list", "of", "words"]
+  describe "parse"
+    $          context "when given a string"
+    $          it "returns a Command structure"
+    $          parse "ls -a -t"
+    `shouldBe` Command "ls" ["-a", "-t"]
 
 
 
