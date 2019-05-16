@@ -24,6 +24,7 @@ exit []   = exitDefault []
 exit args = either exitDefault exitWithCode =<< read args
   where read = return . decimal . head
 
+-- read returns a String if it could not convert the args to a int
 exitDefault :: String -> IO a
 exitDefault _ = exitSuccess
 
