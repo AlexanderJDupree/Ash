@@ -11,8 +11,12 @@ module Core.Parser
   )
 where
 
+import           Core.Ash
 import qualified Data.Text                     as T
 
-parse :: T.Text -> [T.Text]
-parse = T.words
-
+parse :: T.Text -> Command
+parse rawText = Command path args
+ where
+  path   = head tokens
+  args   = tail tokens
+  tokens = T.words rawText

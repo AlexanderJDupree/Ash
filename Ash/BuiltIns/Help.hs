@@ -16,6 +16,8 @@ where
 import           Control.Exception              ( IOException
                                                 , handle
                                                 )
+import           Core.Handler
+import           Core.Ash
 import           Data.Text                      ( Text
                                                 , unpack
                                                 )
@@ -33,9 +35,10 @@ import qualified Data.Text.IO                  as I
 
 -- TODO Needs to be set by the initializer
 docsPath :: IO FilePath
-docsPath = makeAbsolute "ash/Docs/"
+docsPath = makeAbsolute "Not yet implemented"
 
-help :: [T.Text] -> IO ExitCode
+
+help :: Args -> IO ExitCode
 help []   = help ["help"]
 help args = handle (docNotFound cmd) $ do
   path <- docsPath
@@ -46,6 +49,4 @@ displayHelp :: T.Text -> IO ExitCode
 displayHelp text = I.putStrLn text >> return ExitSuccess
 
 docNotFound :: T.Text -> IOException -> IO ExitCode
-docNotFound cmd _ =
-  I.hPutStrLn stderr ("help: No help topics match : " `T.append` cmd)
-    >> return (ExitFailure 1)
+docNotFound cmd = exceptionsIO ("help: No help topics match : " `T.append` cmd)

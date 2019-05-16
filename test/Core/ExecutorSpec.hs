@@ -6,9 +6,12 @@
 -- Stability   :  experimental
 -- Portability :  POSIX
 
+{-# LANGUAGE OverloadedStrings #-}
+
 module Core.ExecutorSpec where
 
 import           Core.Executor
+import Core.Ash
 import qualified Data.Text                     as T
 import           System.Exit                    ( ExitCode(..) )
 import           Test.Hspec
@@ -22,7 +25,7 @@ spec = do
     $ context "when given a valid POSIX command"
     $ it "returns ExitSuccess"
     $ do
-        exitStatus <- execute . map T.pack $ ["ls", "-a"]
+        exitStatus <- execute $ Command "ls" ["-a"]
         exitStatus `shouldBe` ExitSuccess
 
   -- TODO this test is dependent on 'ls' error codes
@@ -30,6 +33,6 @@ spec = do
     $ context "when given an invalid POSIX command"
     $ it "returns ExitFailure n"
     $ do
-        exitStatus <- execute . map T.pack $ ["ls", "--notACommand"]
+        exitStatus <- execute $ Command "ls" ["--notACommand"]
         exitStatus `shouldBe` ExitFailure 2
 

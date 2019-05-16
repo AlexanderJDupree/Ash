@@ -11,6 +11,7 @@ module BuiltIns.Exit
   )
 where
 
+import           Core.Ash
 import           Data.Text                      ( Text )
 import           Data.Text.Read                 ( decimal )
 import           System.Exit                    ( ExitCode(..)
@@ -18,14 +19,14 @@ import           System.Exit                    ( ExitCode(..)
                                                 , exitWith
                                                 )
 
-exit :: [Text] -> IO ExitCode
+exit :: Args -> IO ExitCode
 exit []   = exitDefault []
 exit args = either exitDefault exitWithCode =<< read args
   where read = return . decimal . head
 
+-- read returns a String if it could not convert the args to a int
 exitDefault :: String -> IO a
 exitDefault _ = exitSuccess
 
 exitWithCode :: (Int, Text) -> IO a
 exitWithCode (n, _) = exitWith . ExitFailure $ n
-

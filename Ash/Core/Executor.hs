@@ -6,8 +6,7 @@
 -- Stability   :  experimental
 -- Portability :  POSIX
 
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings   #-}
 
 module Core.Executor
   ( execute
@@ -18,10 +17,11 @@ import           BuiltIns.Table
 import           Control.Exception              ( IOException
                                                 , handle
                                                 )
+import           Core.Ash
+import           Core.Handler
 import qualified Data.Text                     as T
-import qualified Data.Text.IO                  as I
 import           GHC.IO.Handle                  ( Handle )
-import           System.Exit                    ( ExitCode(..) )
+import           System.Exit                    ( ExitCode )
 import           System.Process                 ( ProcessHandle
                                                 , createProcess
                                                 , delegate_ctlc
@@ -29,24 +29,27 @@ import           System.Process                 ( ProcessHandle
                                                 , waitForProcess
                                                 )
 
-execute :: [T.Text] -> IO ExitCode
-execute argv =
-  handle (commandNotFound command) $ case searchBuiltIns command of
-    Just cmd -> cmd args
-    Nothing  -> execute' (T.unpack command) $ map T.unpack args
- where
-  command = head argv
-  args    = tail argv
+data Thread = Thread { stdin   :: Maybe Handle
+                     , stdout  :: Maybe Handle
+                     , stderr  :: Maybe Handle
+                     , pHandle :: ProcessHandle }
 
-execute' :: String -> [String] -> IO ExitCode
-execute' command args =
-  createProcess (proc command args) { delegate_ctlc = True }
-    >>= \thread -> waitForProcess . getHandle $ thread
-  where getHandle (_, _, _, handle) = handle
+execute :: Command -> IO ExitCode
+execute cmd =
+  handle (commandNotFound cmd) $ case searchBuiltIns . path $ cmd of
+    Just builtin -> builtin . args $ cmd
+    Nothing      -> execute' cmd
 
--- TODO Abstract this into a general IO exception handler
-commandNotFound :: T.Text -> IOException -> IO ExitCode
-commandNotFound command _ = do
-  I.putStrLn $ "ash: command not found: " `T.append` command
-  return (ExitFailure 1)
+-- TODO create a Thread type to make createProcess return type manageable
+execute' :: Command -> IO ExitCode
+execute' cmd =
+  createThread cmd >>= \thread -> waitForProcess . pHandle $ thread
 
+createThread :: Command -> IO Thread
+createThread (Command path args) = do
+  (input, output, error, handle) <- createProcess
+    (proc (T.unpack path) $ map T.unpack args) { delegate_ctlc = True }
+  return (Thread input output error handle)
+
+commandNotFound :: Command -> IOException -> IO ExitCode
+commandNotFound cmd = exceptionsIO ("command not found: " `T.append` path cmd)

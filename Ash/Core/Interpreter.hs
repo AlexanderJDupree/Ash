@@ -7,30 +7,42 @@
 -- Portability :  POSIX
 
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Core.Interpreter
   ( runAsh
   )
 where
 
-import           Control.Exception              ( try )
+import           Control.Exception              ( try
+                                                , handle
+                                                , IOException
+                                                )
+import           Core.Ash
 import           Core.Executor
+import           Core.Handler
 import           Core.Parser
+import           Data.Either                    ( either )
+import           Data.Text                      ( Text )
 import           System.Exit                    ( ExitCode(..) )
 import           System.IO                      ( hFlush
                                                 , stdout
                                                 )
-
-import           Data.Either                    ( either )
-import qualified Data.Text                     as T
+                                                
 import qualified Data.Text.IO                  as I
 
 -- TODO prompt should be set by config file/privilege status
-prompt :: T.Text
+prompt :: Text
 prompt = "$ "
 
-writePrompt :: T.Text -> IO ()
+writePrompt :: Text -> IO ()
 writePrompt prompt = I.putStr prompt >> hFlush stdout
+
+-- TODO abort should handle ctrl-c and ctrl-z interrupts as well
+getRawCommand :: IO Text
+getRawCommand = handle abort I.getLine
+  where abort (e :: IOException) = pure "exit"
+
 
 -- | Kickstarts interpreter loop with ExitSuccess code
 runAsh :: IO ExitCode
@@ -43,10 +55,9 @@ runAsh' status = either (exit status) continue =<< try interpreter
 
 -- | Executes one iteration of the interpreter cycle
 interpreter :: IO ExitCode
-interpreter = writePrompt prompt >> I.getLine >>= execute . parse
+interpreter = writePrompt prompt >> getRawCommand >>= execute . parse
 
 -- | Shell exits with previous return code, or the code specified by the user
 exit :: ExitCode -> ExitCode -> IO ExitCode
-exit ExitSuccess     status = return status
-exit (ExitFailure n) _      = return $ ExitFailure n
-
+exit ExitSuccess status = return status
+exit exitCode    _      = return exitCode
