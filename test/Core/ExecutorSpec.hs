@@ -11,7 +11,7 @@
 module Core.ExecutorSpec where
 
 import           Core.Executor
-import Core.Ash
+import           Core.Ash
 import qualified Data.Text                     as T
 import           System.Exit                    ( ExitCode(..) )
 import           Test.Hspec
@@ -35,4 +35,3 @@ spec = do
     $ do
         exitStatus <- execute $ Command "ls" ["--notACommand"]
         exitStatus `shouldBe` ExitFailure 2
-
