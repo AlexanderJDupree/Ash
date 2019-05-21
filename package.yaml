@@ -26,6 +26,7 @@ dependencies:
 - directory
 - unordered-containers
 - unix
+- filepath
 
 library:
   source-dirs: Ash
