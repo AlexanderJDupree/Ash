@@ -28,6 +28,7 @@ import           System.Directory               ( getHomeDirectory
                                                 , setCurrentDirectory
                                                 )
 import           System.Exit                    ( ExitCode(..) )
+import           System.FilePath.Posix          ( (</>) )
 
 -- | ExitSuccess if directory changed to first argument of argv
 changeDir :: Args -> IO ExitCode
@@ -43,8 +44,9 @@ convertToFilePath []   = getHomeDirectory
 convertToFilePath args = convertToFilePath' . unpack . head $ args
 
 convertToFilePath' :: String -> IO FilePath
-convertToFilePath' ('~' : '/' : path) = convertToFilePath' path
-convertToFilePath' path               = makeAbsolute path
+convertToFilePath' ('~' : '/' : path) =
+  getHomeDirectory >>= \home -> pure (home </> path)
+convertToFilePath' path = makeAbsolute path
 
 -- TODO look into moving exception handling into a higher level.
 invalidDirectory :: IOException -> IO ExitCode
