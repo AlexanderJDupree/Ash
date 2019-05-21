@@ -10,7 +10,6 @@
 
 module Core.Handler
   ( exceptionsIO
-  , installHandlers
   )
 where
 
