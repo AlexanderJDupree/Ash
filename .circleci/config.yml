@@ -11,6 +11,9 @@ jobs:
             - ash-{{ checksum "package.yaml" }}-{{ checksum "stack.yaml" }}
       - run:
           name: Resolve/Update Dependencies
+          command: curl -sSL https://get.haskellstack.org/ | sh
+      - run:
+          name: Setup project
           command: stack setup
       - run:
           name: Run tests
